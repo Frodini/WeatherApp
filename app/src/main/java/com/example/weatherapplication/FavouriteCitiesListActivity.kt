@@ -10,16 +10,19 @@ import com.example.weatherapplication.databinding.ActivityFavouriteCitiesListBin
 class FavoriteCitiesListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFavouriteCitiesListBinding
     private lateinit var cityAdapter: CityAdapter
+    private var currentQuery: String = ""  // Inicializa con un string vacío
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFavouriteCitiesListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setUpFilters()  // Asegúrate de llamar a setUpFilters para inicializar los listeners
+
         cityAdapter = CityAdapter(CityRepository.getFavoriteCities().toMutableList()) { city ->
             city.isFavorite = !city.isFavorite
             CityRepository.updateCity(city)
-            if (!city.isFavorite) {  // Si la ciudad ya no es favorita, actualiza la lista
+            if (!city.isFavorite) {
                 updateFavoriteCities()
             }
         }
@@ -27,8 +30,47 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
         binding.favoritesRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
+
     private fun updateFavoriteCities() {
         cityAdapter.updateCities(CityRepository.getFavoriteCities().toMutableList())
+        filterCitiesByName(currentQuery)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateFavoriteCities()  // Asegúrate de actualizar cuando la actividad se reanude
+    }
+
+    private fun filterCitiesByName(query: String) {
+        val filteredList = if (query.isEmpty()) {
+            CityRepository.getFavoriteCities()
+        } else {
+            CityRepository.getFavoriteCities().filter { it.name.contains(query, ignoreCase = true) }
+        }
+        cityAdapter.updateCities(filteredList.toMutableList())
+    }
+
+    private fun setUpFilters() {
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                currentQuery = s.toString()  // Actualiza currentQuery con el texto actual
+                filterCitiesByName(currentQuery)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.filterTempButton.setOnClickListener {
+            val filteredList = CityRepository.getFavoriteCities().sortedBy { it.temperature }
+            cityAdapter.updateCities(filteredList.toMutableList())
+        }
+
+        binding.filterWindButton.setOnClickListener {
+            val filteredList = CityRepository.getFavoriteCities().sortedBy { it.windSpeed }
+            cityAdapter.updateCities(filteredList.toMutableList())
+        }
     }
 
 }
