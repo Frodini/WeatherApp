@@ -1,5 +1,6 @@
 package com.example.weatherapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,25 +18,13 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
         binding = ActivityFavouriteCitiesListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setUpFilters()  // Asegúrate de llamar a setUpFilters para inicializar los listeners
-
-        cityAdapter = CityAdapter(CityRepository.getFavoriteCities().toMutableList()) { city ->
-            city.isFavorite = !city.isFavorite
-            CityRepository.updateCity(city)
-            if (!city.isFavorite) {
-                updateFavoriteCities()
-            }
-        }
-        binding.favoritesRecyclerView.adapter = cityAdapter
-        binding.favoritesRecyclerView.layoutManager = LinearLayoutManager(this)
+        setUpFilters()  // Configura los filtros
+        setUpRecyclerView()  // Configura el RecyclerView
     }
-
-
     private fun updateFavoriteCities() {
         cityAdapter.updateCities(CityRepository.getFavoriteCities().toMutableList())
         filterCitiesByName(currentQuery)
     }
-
     override fun onResume() {
         super.onResume()
         updateFavoriteCities()  // Asegúrate de actualizar cuando la actividad se reanude
@@ -71,6 +60,34 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
             val filteredList = CityRepository.getFavoriteCities().sortedBy { it.windSpeed }
             cityAdapter.updateCities(filteredList.toMutableList())
         }
+    }
+
+    private fun setUpRecyclerView() {
+        cityAdapter = CityAdapter(
+            CityRepository.getFavoriteCities().toMutableList(),
+            { city ->
+                // Manipulación del botón de favoritos
+                city.isFavorite = !city.isFavorite
+                CityRepository.updateCity(city)
+                if (!city.isFavorite) {
+                    updateFavoriteCities()  // Solo actualiza si se quita de favoritos
+                }
+            },
+            { city -> // Para abrir detalles
+                openCityDetailActivity(city)
+            }
+        )
+        binding.favoritesRecyclerView.adapter = cityAdapter
+        binding.favoritesRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun openCityDetailActivity(city: Cities) {
+        val intent = Intent(this, CitiesDetailsActivity::class.java).apply {
+            putExtra("city_name", city.name)
+            putExtra("temperature", city.temperature)
+            putExtra("is_favorite", city.isFavorite)
+        }
+        startActivity(intent)
     }
 
 }

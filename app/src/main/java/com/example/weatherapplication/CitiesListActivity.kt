@@ -1,5 +1,6 @@
 package com.example.weatherapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -24,17 +25,6 @@ class CitiesListActivity : AppCompatActivity() {
 
     private fun initializeCities() {
         displayedCities = CityRepository.getAllCities().toMutableList()
-    }
-
-    private fun setUpRecyclerView() {
-        cityAdapter = CityAdapter(displayedCities) { city ->
-            val index = displayedCities.indexOf(city)
-            city.isFavorite = !city.isFavorite
-            CityRepository.updateCity(city)  // Asegúrate de actualizar el repositorio
-            cityAdapter.notifyItemChanged(index)
-        }
-        binding.citiesRecyclerView.adapter = cityAdapter
-        binding.citiesRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun setUpFilters() {
@@ -65,4 +55,28 @@ class CitiesListActivity : AppCompatActivity() {
         }
         cityAdapter.updateCities(filteredList.toMutableList())
     }
+
+    private fun setUpRecyclerView() {
+        cityAdapter = CityAdapter(displayedCities, { city ->
+            val index = displayedCities.indexOf(city)
+            city.isFavorite = !city.isFavorite
+            CityRepository.updateCity(city)
+            cityAdapter.notifyItemChanged(index)
+        }, { city ->
+            openCityDetailActivity(city)
+        })
+        binding.citiesRecyclerView.adapter = cityAdapter
+        binding.citiesRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun openCityDetailActivity(city: Cities) {
+        val intent = Intent(this, CitiesDetailsActivity::class.java).apply {
+            putExtra("city_name", city.name)
+            putExtra("temperature", city.temperature)
+            putExtra("wind_speed", city.windSpeed)  // Asume que tienes esta propiedad
+            putExtra("is_favorite", city.isFavorite)
+        }
+        startActivity(intent)
+    }
+
 }
