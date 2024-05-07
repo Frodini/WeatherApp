@@ -20,6 +20,12 @@ class CitiesListActivity : AppCompatActivity() {
 
         initializeCities()
         setUpRecyclerView()
+        CityRepository.fetchWeatherData("THKTHG25EQ4QFULENB9VYT3D8")
+        CityRepository.setOnCitiesUpdatedListener {
+            runOnUiThread{
+                cityAdapter.notifyDataSetChanged()
+            }
+        }
         setUpFilters()
     }
 
