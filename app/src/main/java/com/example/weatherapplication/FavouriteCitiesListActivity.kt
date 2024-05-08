@@ -18,6 +18,12 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
         binding = ActivityFavouriteCitiesListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        CityRepository.fetchWeatherData("THKTHG25EQ4QFULENB9VYT3D8")
+        CityRepository.setOnCitiesUpdatedListener {
+            runOnUiThread{
+                cityAdapter.notifyDataSetChanged()
+            }
+        }
         setUpFilters()  // Configura los filtros
         setUpRecyclerView()  // Configura el RecyclerView
     }

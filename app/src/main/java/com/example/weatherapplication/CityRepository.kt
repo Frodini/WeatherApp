@@ -1,5 +1,7 @@
 package com.example.weatherapplication
 
+import android.content.Context
+import android.content.SharedPreferences
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -19,6 +21,7 @@ object CityRepository {
     )*/
 
     private var onCitiesUpdated: (() -> Unit)? = null
+    private lateinit var sharedPreferences: SharedPreferences
 
     fun getAllCities(): List<Cities> = cities
 
@@ -28,7 +31,8 @@ object CityRepository {
         val index = cities.indexOfFirst { it.name == city.name }
         if (index != -1) {
             cities[index] = city
-            onCitiesUpdated?.invoke()  // Llamar al callback cuando se actualiza una ciudad
+            sharedPreferences.edit().putBoolean(city.name, city.isFavorite).apply()
+            onCitiesUpdated?.invoke()
         }
     }
 
@@ -38,15 +42,15 @@ object CityRepository {
 
     private val cities = mutableListOf<Cities>()
 
-    init {
+    fun init(context: Context) {
+        sharedPreferences = context.getSharedPreferences("WeatherAppPrefs", Context.MODE_PRIVATE)
         initializeCities()
     }
-
     private fun initializeCities() {
         val cityNames = listOf("Zaragoza", "Madrid", "Barcelona", "Valencia", "Sevilla", "Bilbao", "Oviedo", "Málaga", "Murcia", "Huesca")
         cityNames.forEach {
-            // Añade ciudades con valores predeterminados que serán actualizados
-            cities.add(Cities(it, false, 0.0, 0.0))
+            val isFavorite = sharedPreferences.getBoolean(it, false)
+            cities.add(Cities(it, isFavorite, 0.0, 0.0))
         }
         fetchWeatherData("YOUR_API_KEY")
     }

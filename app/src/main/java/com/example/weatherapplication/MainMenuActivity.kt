@@ -48,6 +48,7 @@ class MainMenuActivity : AppCompatActivity() {
             insets
         }
         requestLocation()
+        CityRepository.init(this)
 
         val btnOpenFavoriteCitiesListActivity = findViewById<Button>(R.id.btnFavoriteCities)
         btnOpenFavoriteCitiesListActivity.setOnClickListener {
