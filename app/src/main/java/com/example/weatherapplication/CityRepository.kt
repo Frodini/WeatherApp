@@ -47,12 +47,13 @@ object CityRepository {
         initializeCities()
     }
     private fun initializeCities() {
+        cities.clear()  // Limpia la lista antes de añadir elementos
         val cityNames = listOf("Zaragoza", "Madrid", "Barcelona", "Valencia", "Sevilla", "Bilbao", "Oviedo", "Málaga", "Murcia", "Huesca")
         cityNames.forEach {
             val isFavorite = sharedPreferences.getBoolean(it, false)
             cities.add(Cities(it, isFavorite, 0.0, 0.0))
         }
-        fetchWeatherData("YOUR_API_KEY")
+        fetchWeatherData("THKTHG25EQ4QFULENB9VYT3D8")
     }
 
     fun fetchWeatherData(apiKey: String) {
