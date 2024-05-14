@@ -20,10 +20,31 @@
         android:textSize="18sp"/>
 
     <TextView
-        android:id="@+id/tvWeatherDescription"
+        android:id="@+id/tvWindSpeed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"/>
+
+    <CheckBox
+        android:id="@+id/cbFavorite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:text="City Favorite" />
+
+    <!-- Botón para ir a la actividad de Datos Históricos -->
+    <Button
+        android:id="@+id/btnHistoricalData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ver Datos Históricos"/>
+
+    <!-- Botón para guardar los datos actuales -->
+    <Button
+        android:id="@+id/btnSaveCurrentData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar Datos Actuales"/>
 
     <!-- Additional views for more weather details -->
 </LinearLayout>

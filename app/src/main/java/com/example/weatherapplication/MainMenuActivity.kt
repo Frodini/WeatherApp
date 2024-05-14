@@ -90,10 +90,8 @@ class MainMenuActivity : AppCompatActivity() {
     }
 
     private fun fetchWeatherAndCity(latitude: Double, longitude: Double) {
-        for (i in 0..1) {
-            obtenerDatosDesdeAPI(latitude, longitude)
-            fetchCityName(latitude, longitude)
-        }
+        obtenerDatosDesdeAPI(latitude, longitude)
+        fetchCityName(latitude, longitude)
     }
 
     private fun obtenerDatosDesdeAPI(latitude: Double, longitude: Double) {

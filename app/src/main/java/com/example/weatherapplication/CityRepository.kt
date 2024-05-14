@@ -7,18 +7,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object CityRepository {
-    /*private val cities = mutableListOf(
-        Cities("Huesca", false),
-        Cities("Zaragoza", false),
-        Cities("Barcelona", false),
-        Cities("Valencia", false),
-        Cities("Sevilla", false),
-        Cities("Bilbao", false),
-        Cities("Oviedo", false),
-        Cities("Málaga", false),
-        Cities("Murcia", false),
-        Cities("Madrid", false)
-    )*/
 
     private var onCitiesUpdated: (() -> Unit)? = null
     private lateinit var sharedPreferences: SharedPreferences

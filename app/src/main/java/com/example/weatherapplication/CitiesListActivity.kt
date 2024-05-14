@@ -79,7 +79,7 @@ class CitiesListActivity : AppCompatActivity() {
         val intent = Intent(this, CitiesDetailsActivity::class.java).apply {
             putExtra("city_name", city.name)
             putExtra("temperature", city.temperature)
-            putExtra("wind_speed", city.windSpeed)  // Asume que tienes esta propiedad
+            putExtra("windSpeed", city.windSpeed)  // Asume que tienes esta propiedad
             putExtra("is_favorite", city.isFavorite)
         }
         startActivity(intent)

@@ -92,6 +92,7 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
             putExtra("city_name", city.name)
             putExtra("temperature", city.temperature)
             putExtra("is_favorite", city.isFavorite)
+            putExtra("windSpeed", city.windSpeed)
         }
         startActivity(intent)
     }
