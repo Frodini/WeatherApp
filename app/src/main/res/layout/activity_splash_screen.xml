@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/splash_background">
     <!-- Puedes personalizar esta vista con tu logo o cualquier otra cosa que quieras mostrar en el splash screen -->
 <ImageView
@@ -10,4 +11,13 @@
     android:layout_height="200dp"
     android:layout_centerInParent="true"
     android:src="@mipmap/ic_launcher" />
+
+<ProgressBar
+    android:id="@+id/progressBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 </RelativeLayout>

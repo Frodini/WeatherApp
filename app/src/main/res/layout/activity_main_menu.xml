@@ -5,9 +5,20 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/splash_background">
+    android:padding="0dp"> <!-- Eliminar el padding -->
 
+    <!-- ImageView for the weather background -->
+    <ImageView
+        android:id="@+id/weatherBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Temperature TextView -->
     <TextView
         android:id="@+id/textViewTemperature"
         android:layout_width="wrap_content"
@@ -16,13 +27,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="88dp"
         android:padding="16dp"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="96sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Location TextView -->
     <TextView
         android:id="@+id/textViewLocation"
         android:layout_width="wrap_content"
@@ -31,6 +43,7 @@
         android:layout_centerHorizontal="true"
         android:paddingTop="16dp"
         android:textSize="24sp"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/textViewWindDetails"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.455"
@@ -38,6 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewTemperature"
         app:layout_constraintVertical_bias="0.0" />
 
+    <!-- Weather Description TextView -->
     <TextView
         android:id="@+id/textViewWeatherDescription"
         android:layout_width="wrap_content"
@@ -46,6 +60,7 @@
         android:layout_centerHorizontal="true"
         android:paddingTop="16dp"
         android:textSize="18sp"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.475"
@@ -53,6 +68,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewWindDetails"
         app:layout_constraintVertical_bias="0.0" />
 
+    <!-- Wind Details TextView -->
     <TextView
         android:id="@+id/textViewWindDetails"
         android:layout_width="wrap_content"
@@ -62,10 +78,12 @@
         android:layout_marginTop="97dp"
         android:paddingTop="16dp"
         android:textSize="18sp"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTemperature" />
 
+    <!-- General Cities Button -->
     <Button
         android:id="@+id/btnGeneralCities"
         android:layout_width="wrap_content"
@@ -76,6 +94,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btnFavoriteCities"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Favorite Cities Button -->
     <Button
         android:id="@+id/btnFavoriteCities"
         android:layout_width="wrap_content"
