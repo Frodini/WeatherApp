@@ -46,6 +46,9 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+
     implementation("androidx.room:room-runtime:2.6.1") // Room runtime
     kapt("androidx.room:room-compiler:2.6.1") // Room compiler
 

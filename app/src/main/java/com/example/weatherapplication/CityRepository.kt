@@ -2,6 +2,7 @@ package com.example.weatherapplication
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -58,6 +59,7 @@ object CityRepository {
                             val todayWeather = days.getJSONObject(0)
                             val temperature = todayWeather.getDouble("temp")
                             val windSpeed = todayWeather.getDouble("windspeed")
+                            Log.d("Respuesta del servidor","$response")
 
                             city.temperature = temperature
                             city.windSpeed = windSpeed
