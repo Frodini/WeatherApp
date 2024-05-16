@@ -22,13 +22,22 @@ class CitiesDetailsActivity : AppCompatActivity() {
         val cityName = intent.getStringExtra("city_name") ?: "Unknown City"
         val temperature = intent.getDoubleExtra("temperature", 0.0)
         val windSpeed = intent.getDoubleExtra("windSpeed", 0.0)
+        val humidity = intent.getDoubleExtra("humidity", 0.0)
+        val precipProbability = intent.getDoubleExtra("precipProbability", 0.0)
+        val cloudCover = intent.getDoubleExtra("cloudCover", 0.0)
+        val description = intent.getStringExtra("description") ?: "No Description"
         val isFavorite = intent.getBooleanExtra("is_favorite", false)
 
-        Log.d("CIUDAD ORIGEN","La ciudad es $cityName")
+        Log.d("CIUDAD ORIGEN", "La ciudad es $cityName")
+
         // Establecer los datos recuperados en las vistas
         findViewById<TextView>(R.id.tvCityName).text = cityName
         findViewById<TextView>(R.id.tvTemperature).text = "$temperature ºC"
         findViewById<TextView>(R.id.tvWindSpeed).text = "$windSpeed km/h"
+        findViewById<TextView>(R.id.tvHumidity).text = "$humidity %"
+        findViewById<TextView>(R.id.tvPrecipProbability).text = "$precipProbability %"
+        findViewById<TextView>(R.id.tvCloudCover).text = "$cloudCover %"
+        findViewById<TextView>(R.id.tvDescription).text = description
         findViewById<CheckBox>(R.id.cbFavorite).isChecked = isFavorite
 
         val intentToHistoricalData = Intent(this, HistoricalDataActivity::class.java)
@@ -44,7 +53,11 @@ class CitiesDetailsActivity : AppCompatActivity() {
             val weatherData = WeatherData(
                 cityName = cityName,
                 temperature = temperature,
-                windSpeed = windSpeed
+                windSpeed = windSpeed,
+                humidity = humidity,
+                precipProbability = precipProbability,
+                cloudCover = cloudCover,
+                description = description
             )
             saveWeatherData(weatherData)
         }
@@ -58,5 +71,4 @@ class CitiesDetailsActivity : AppCompatActivity() {
             }
         }
     }
-
 }

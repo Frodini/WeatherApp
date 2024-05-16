@@ -91,8 +91,12 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
         val intent = Intent(this, CitiesDetailsActivity::class.java).apply {
             putExtra("city_name", city.name)
             putExtra("temperature", city.temperature)
+            putExtra("windSpeed", city.windSpeed)  // Asume que tienes esta propiedad
             putExtra("is_favorite", city.isFavorite)
-            putExtra("windSpeed", city.windSpeed)
+            putExtra("humidity", city.humidity)
+            putExtra("precipProbability", city.precipProbability)
+            putExtra("cloudCover", city.cloudCover)
+            putExtra("description", city.description)
         }
         startActivity(intent)
     }

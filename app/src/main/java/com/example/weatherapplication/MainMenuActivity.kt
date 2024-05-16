@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.weatherapplication.databinding.ActivityMainMenuBinding
@@ -15,6 +16,9 @@ class MainMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Verifica el color de fondo de la actividad
+        binding.main.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
 
         configureWindowInsets()
         configureListeners()
@@ -47,12 +51,21 @@ class MainMenuActivity : AppCompatActivity() {
         val temperature = sharedPreferences.getFloat("temperature", 0.0f).toDouble()
         val description = sharedPreferences.getString("description", "No description")
         val icon = sharedPreferences.getString("icon", "wind")
+        val tempmin = sharedPreferences.getFloat("tempmin",0.0f).toDouble()
+        val tempmax = sharedPreferences.getFloat("tempmax",0.0f).toDouble()
+        val feelsLike = sharedPreferences.getFloat("feelsLike",0.0f).toDouble()
 
         // Format the temperature to one decimal place
         val formattedTemperature = String.format("%.1f", temperature)
+        val formattedTempMin = String.format("%.1f", tempmin)
+        val formattedTempMax = String.format("%.1f", tempmax)
+        val formattedFeelsLike = String.format("%.1f", feelsLike)
 
         binding.textViewTemperature.text = "$formattedTemperature ºC"
-        binding.textViewWeatherDescription.text = "Descripción: $description"
+        binding.textViewTempMin.text = "Min: $formattedTempMin ºC"
+        binding.textViewTempMax.text = "Max: $formattedTempMax ºC"
+        binding.textViewFeelsLike.text = "Feels like: $formattedFeelsLike ºC"
+        binding.textViewWeatherDescription.text = "$description"
         if (icon != null) {
             setWeatherIcon(icon)
         }
@@ -63,7 +76,6 @@ class MainMenuActivity : AppCompatActivity() {
         val city = sharedPreferences.getString("city", "Unknown city")
         binding.textViewLocation.text = city
     }
-
     private fun setWeatherIcon(icon: String) {
         val weatherBackground: ImageView = findViewById(R.id.weatherBackground)
         when (icon) {

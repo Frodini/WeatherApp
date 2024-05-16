@@ -19,8 +19,10 @@ object CityRepository {
     fun updateCity(city: Cities) {
         val index = cities.indexOfFirst { it.name == city.name }
         if (index != -1) {
-            cities[index] = city
-            sharedPreferences.edit().putBoolean(city.name, city.isFavorite).apply()
+            synchronized(cities) {
+                cities[index] = city
+                sharedPreferences.edit().putBoolean(city.name, city.isFavorite).apply()
+            }
             onCitiesUpdated?.invoke()
         }
     }
@@ -35,12 +37,13 @@ object CityRepository {
         sharedPreferences = context.getSharedPreferences("WeatherAppPrefs", Context.MODE_PRIVATE)
         initializeCities()
     }
+
     private fun initializeCities() {
         cities.clear()  // Limpia la lista antes de añadir elementos
         val cityNames = listOf("Zaragoza", "Madrid", "Barcelona", "Valencia", "Sevilla", "Bilbao", "Oviedo", "Málaga", "Murcia", "Huesca")
         cityNames.forEach {
             val isFavorite = sharedPreferences.getBoolean(it, false)
-            cities.add(Cities(it, isFavorite, 0.0, 0.0))
+            cities.add(Cities(it, isFavorite, 0.0, 0.0, 0.0, 0.0, 0.0, ""))
         }
         fetchWeatherData("THKTHG25EQ4QFULENB9VYT3D8")
     }
@@ -59,10 +62,20 @@ object CityRepository {
                             val todayWeather = days.getJSONObject(0)
                             val temperature = todayWeather.getDouble("temp")
                             val windSpeed = todayWeather.getDouble("windspeed")
+                            val humidity = todayWeather.getDouble("humidity")
+                            val precipProbability = todayWeather.getDouble("precipprob")
+                            val cloudCover = todayWeather.getDouble("cloudcover")
+                            val description = todayWeather.getString("description")
                             Log.d("Respuesta del servidor","$response")
 
-                            city.temperature = temperature
-                            city.windSpeed = windSpeed
+                            synchronized(cities) {
+                                city.temperature = temperature
+                                city.windSpeed = windSpeed
+                                city.humidity = humidity
+                                city.precipProbability = precipProbability
+                                city.cloudCover = cloudCover
+                                city.description = description
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -73,4 +86,3 @@ object CityRepository {
         }.start()
     }
 }
-

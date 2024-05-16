@@ -81,6 +81,10 @@ class CitiesListActivity : AppCompatActivity() {
             putExtra("temperature", city.temperature)
             putExtra("windSpeed", city.windSpeed)  // Asume que tienes esta propiedad
             putExtra("is_favorite", city.isFavorite)
+            putExtra("humidity", city.humidity)
+            putExtra("precipProbability", city.precipProbability)
+            putExtra("cloudCover", city.cloudCover)
+            putExtra("description", city.description)
         }
         startActivity(intent)
     }

@@ -150,9 +150,12 @@ class SplashScreenActivity : AppCompatActivity() {
                         val temperature = firstDay.getDouble("temp")
                         val description = jsonObject.getString("description")
                         val icon = firstDay.getString("icon")
+                        val tempmin = firstDay.getDouble("tempmin")
+                        val tempmax = firstDay.getDouble("tempmax")
+                        val feelsLike = firstDay.getDouble("feelslike")
 
                         // Save the data in shared preferences or a global variable
-                        saveWeatherData(temperature, description, icon)
+                        saveWeatherData(temperature, description, icon, tempmin, tempmax, feelsLike)
 
                         weatherDataFetched = true
                         proceedToMainMenu()
@@ -214,12 +217,15 @@ class SplashScreenActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveWeatherData(temperature: Double, description: String, icon: String) {
+    private fun saveWeatherData(temperature: Double, description: String, icon: String, tempmin: Double, tempmax: Double, feelsLike: Double) {
         val sharedPreferences = getSharedPreferences("WeatherData", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putFloat("temperature", temperature.toFloat())
         editor.putString("description", description)
         editor.putString("icon", icon)
+        editor.putFloat("tempmin", tempmin.toFloat())
+        editor.putFloat("tempmax", tempmax.toFloat())
+        editor.putFloat("feelsLike", feelsLike.toFloat())
         editor.apply()
     }
 
