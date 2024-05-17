@@ -21,6 +21,7 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -160,7 +161,6 @@ class SplashScreenActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
                 Log.e("WeatherAPI", "Request failed: ${e.message}")
-                // Proceed to main menu if the request fails
                 proceedToMainMenu()
             }
 
@@ -172,6 +172,8 @@ class SplashScreenActivity : AppCompatActivity() {
                     try {
                         val jsonObject = JSONObject(responseBody)
                         val daysArray = jsonObject.getJSONArray("days")
+
+                        // Save the first day's weather data
                         val firstDay = daysArray.getJSONObject(0)
                         val temperature = firstDay.getDouble("temp")
                         val description = jsonObject.getString("description")
@@ -179,26 +181,54 @@ class SplashScreenActivity : AppCompatActivity() {
                         val tempmin = firstDay.getDouble("tempmin")
                         val tempmax = firstDay.getDouble("tempmax")
                         val feelsLike = firstDay.getDouble("feelslike")
-
-                        // Save the fetched weather data
                         saveWeatherData(temperature, description, icon, tempmin, tempmax, feelsLike)
 
+                        // Save the next 5 days' weather data
+                        val futureWeatherList = mutableListOf<FutureWeatherData>()
+                        for (i in 1..5) {
+                            val day = daysArray.getJSONObject(i)
+                            val dayData = FutureWeatherData(
+                                date = day.getString("datetime"),
+                                temperature = day.getDouble("temp"),
+                                windSpeed = day.getDouble("windspeed"),
+                                humidity = day.getDouble("humidity"),
+                                description = day.getString("description")
+                            )
+                            futureWeatherList.add(dayData)
+                        }
+                        saveFutureWeatherData(futureWeatherList)
+
                         weatherDataFetched = true
-                        // Proceed to main menu
                         proceedToMainMenu()
                     } catch (e: JSONException) {
                         e.printStackTrace()
                         Log.e("WeatherAPI", "JSON Parsing error: ${e.message}")
-                        // Proceed to main menu if JSON parsing fails
                         proceedToMainMenu()
                     }
                 } else {
                     Log.e("WeatherAPI", "Response not successful: ${response.code}")
-                    // Proceed to main menu if response is not successful
                     proceedToMainMenu()
                 }
             }
         })
+    }
+
+    private fun saveFutureWeatherData(futureWeatherList: List<FutureWeatherData>) {
+        val sharedPreferences = getSharedPreferences("FutureWeatherData", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val futureWeatherJsonArray = JSONArray()
+        for (weatherData in futureWeatherList) {
+            val dayJson = JSONObject().apply {
+                put("date", weatherData.date)
+                put("temperature", weatherData.temperature)
+                put("windSpeed", weatherData.windSpeed)
+                put("humidity", weatherData.humidity)
+                put("description", weatherData.description)
+            }
+            futureWeatherJsonArray.put(dayJson)
+        }
+        editor.putString("futureWeather", futureWeatherJsonArray.toString())
+        editor.apply()
     }
 
     // Method to fetch city name from an external API

@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp">
+    android:padding="0dp"
+    tools:context=".MainMenuActivity">
 
     <!-- ImageView for the weather background -->
     <ImageView
@@ -16,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- Location TextView -->
     <TextView
@@ -144,5 +145,18 @@
         android:text="Favorite Cities"
         app:layout_constraintTop_toBottomOf="@+id/textViewWindDetails"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Weather Report for the next 5 days -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFutureWeather"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/btnFavoriteCities"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/activity_future_weather_adapter" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

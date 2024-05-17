@@ -7,7 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapplication.databinding.ActivityMainMenuBinding
+import org.json.JSONArray
+import org.json.JSONObject
 
 // Main activity class for the main menu
 class MainMenuActivity : AppCompatActivity() {
@@ -32,6 +35,7 @@ class MainMenuActivity : AppCompatActivity() {
         // Retrieve and display the saved city and weather data
         getSavedCityData()
         getSavedWeatherData()
+        getFutureWeatherData()
     }
 
     // Method to configure window insets for proper padding
@@ -123,5 +127,29 @@ class MainMenuActivity : AppCompatActivity() {
             "wind" -> weatherBackground.setImageResource(R.drawable.wind)
             else -> weatherBackground.setImageResource(R.drawable.wind) // Default image
         }
+    }
+
+    // Method to retrieve and display future weather data
+    private fun getFutureWeatherData() {
+        val sharedPreferences = getSharedPreferences("FutureWeatherData", MODE_PRIVATE)
+        val futureWeatherDataString = sharedPreferences.getString("futureWeather", "[]")
+        val futureWeatherJsonArray = JSONArray(futureWeatherDataString)
+
+        val futureWeatherList = mutableListOf<FutureWeatherData>()
+        for (i in 0 until futureWeatherJsonArray.length()) {
+            val dayJson = futureWeatherJsonArray.getJSONObject(i)
+            val dayData = FutureWeatherData(
+                date = dayJson.getString("date"),
+                temperature = dayJson.getDouble("temperature"),
+                windSpeed = dayJson.getDouble("windSpeed"),
+                humidity = dayJson.getDouble("humidity"),
+                description = dayJson.getString("description")
+            )
+            futureWeatherList.add(dayData)
+        }
+
+        // Initialize the RecyclerView with the future weather data
+        binding.recyclerViewFutureWeather.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewFutureWeather.adapter = FutureWeatherAdapter(futureWeatherList)
     }
 }
