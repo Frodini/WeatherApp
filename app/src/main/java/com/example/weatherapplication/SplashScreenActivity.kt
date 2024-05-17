@@ -123,7 +123,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun obtenerDatosDesdeAPI(latitude: Double, longitude: Double) {
-        val apiKey = "THKTHG25EQ4QFULENB9VYT3D8"
+        val apiKey = "X4L4EFE3SE4UUWFRSNTVRHWWB"
         val url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$latitude,$longitude?unitGroup=metric&key=$apiKey"
 
         Log.d("WeatherAPI", "URL: $url")

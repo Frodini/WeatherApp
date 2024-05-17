@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [WeatherData::class], version = 2)
+@Database(entities = [WeatherData::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun weatherDataDao(): WeatherDataDao
@@ -23,20 +23,10 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "weather_database"
                 )
-                    .addMigrations(MIGRATION_1_2) // Add migration strategy here
+                    .fallbackToDestructiveMigration() // Permitir migraciones destructivas
                     .build()
                 INSTANCE = instance
                 instance
-            }
-        }
-
-        // Define migration strategy
-        val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE WeatherData ADD COLUMN humidity REAL NOT NULL DEFAULT 0.0")
-                database.execSQL("ALTER TABLE WeatherData ADD COLUMN precipProbability REAL NOT NULL DEFAULT 0.0")
-                database.execSQL("ALTER TABLE WeatherData ADD COLUMN cloudCover REAL NOT NULL DEFAULT 0.0")
-                database.execSQL("ALTER TABLE WeatherData ADD COLUMN description TEXT NOT NULL DEFAULT ''")
             }
         }
     }

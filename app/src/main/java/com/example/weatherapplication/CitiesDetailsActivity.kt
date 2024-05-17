@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class CitiesDetailsActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -28,6 +31,10 @@ class CitiesDetailsActivity : AppCompatActivity() {
         val description = intent.getStringExtra("description") ?: "No Description"
         val isFavorite = intent.getBooleanExtra("is_favorite", false)
 
+        // Obtener la fecha y hora actuales, redondeando la hora actual
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Calendar.getInstance().time)
+        val currentTime = SimpleDateFormat("HH:00:00", Locale.getDefault()).format(Calendar.getInstance().time)
+
         Log.d("CIUDAD ORIGEN", "La ciudad es $cityName")
 
         // Establecer los datos recuperados en las vistas
@@ -38,10 +45,14 @@ class CitiesDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvPrecipProbability).text = "$precipProbability %"
         findViewById<TextView>(R.id.tvCloudCover).text = "$cloudCover %"
         findViewById<TextView>(R.id.tvDescription).text = description
+        findViewById<TextView>(R.id.tvReportDate).text = currentDate
+        findViewById<TextView>(R.id.tvReportTime).text = currentTime
         findViewById<CheckBox>(R.id.cbFavorite).isChecked = isFavorite
 
         val intentToHistoricalData = Intent(this, HistoricalDataActivity::class.java)
         intentToHistoricalData.putExtra("city_name", cityName)
+        intentToHistoricalData.putExtra("report_date", currentDate)
+        intentToHistoricalData.putExtra("report_time", currentTime)
         findViewById<Button>(R.id.btnHistoricalData).setOnClickListener {
             startActivity(intentToHistoricalData)
         }
@@ -57,7 +68,9 @@ class CitiesDetailsActivity : AppCompatActivity() {
                 humidity = humidity,
                 precipProbability = precipProbability,
                 cloudCover = cloudCover,
-                description = description
+                description = description,
+                reportDate = currentDate,
+                reportTime = currentTime
             )
             saveWeatherData(weatherData)
         }
@@ -65,7 +78,8 @@ class CitiesDetailsActivity : AppCompatActivity() {
 
     private fun saveWeatherData(weatherData: WeatherData) {
         lifecycleScope.launch {
-            AppDatabase.getDatabase(this@CitiesDetailsActivity).weatherDataDao().insert(weatherData)
+            val dao = AppDatabase.getDatabase(this@CitiesDetailsActivity).weatherDataDao()
+            dao.insert(weatherData)
             runOnUiThread {
                 Toast.makeText(this@CitiesDetailsActivity, "Datos guardados para ${weatherData.cityName}", Toast.LENGTH_SHORT).show()
             }

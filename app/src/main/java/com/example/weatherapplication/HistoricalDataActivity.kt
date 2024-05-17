@@ -23,24 +23,23 @@ class HistoricalDataActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val cityName = intent.getStringExtra("city_name")
-        Log.d("CIUDAD","Nombre de la ciudad seleccionada $cityName")
+        Log.d("CIUDAD", "Nombre de la ciudad seleccionada $cityName")
         if (cityName != null) {
             loadHistoricalData(cityName)
+        } else {
+            Toast.makeText(this, "City name not provided", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun loadHistoricalData(cityName: String) {
         lifecycleScope.launch {
             val dataList = AppDatabase.getDatabase(this@HistoricalDataActivity).weatherDataDao().getWeatherDataByCity(cityName)
-            if (dataList.isNotEmpty()) {
-                adapter.updateData(dataList)  // Asegúrate de que exista este método en tu adapter
-                runOnUiThread {
-                    adapter.updateData(dataList)
+            runOnUiThread {
+                if (dataList.isNotEmpty()) {
+                    adapter.updateData(dataList) // Asegúrate de que exista este método en tu adapter
+                } else {
+                    Toast.makeText(this@HistoricalDataActivity, "No historical data found for $cityName", Toast.LENGTH_LONG).show()
                 }
-
-            } else {
-                Toast.makeText(this@HistoricalDataActivity, "No historical data found for $cityName", Toast.LENGTH_LONG).show()
             }
         }
     }

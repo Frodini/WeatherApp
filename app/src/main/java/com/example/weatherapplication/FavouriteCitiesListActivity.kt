@@ -18,7 +18,7 @@ class FavoriteCitiesListActivity : AppCompatActivity() {
         binding = ActivityFavouriteCitiesListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        CityRepository.fetchWeatherData("THKTHG25EQ4QFULENB9VYT3D8")
+        CityRepository.fetchWeatherData("X4L4EFE3SE4UUWFRSNTVRHWWB")
         CityRepository.setOnCitiesUpdatedListener {
             runOnUiThread{
                 cityAdapter.notifyDataSetChanged()
