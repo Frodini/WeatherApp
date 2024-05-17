@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,12 +12,42 @@
         android:text="Datos Históricos"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/tvAverageTemperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Average Temperature: "
+        android:textSize="18sp"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/tvAverageWindSpeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Average Wind Speed: "
+        android:textSize="18sp"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/tvAverageHumidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Average Humidity: "
+        android:textSize="18sp"
+        android:textColor="@android:color/black"/>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="16dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewHistoricalData"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-
 </LinearLayout>

@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:id="@+id/mainLayout">
 
     <TextView
         android:id="@+id/tvCityName"
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="@android:color/white"
         tools:text="City Name"/>
 
     <TextView
@@ -19,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
+        android:textColor="@android:color/white"
         tools:text="Temperature: 20 ºC"/>
 
     <TextView
@@ -26,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Wind Speed: 15 km/h"/>
 
     <TextView
@@ -33,6 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Humidity: 60%"/>
 
     <TextView
@@ -40,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Precipitation Probability: 20%"/>
 
     <TextView
@@ -47,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Cloud Cover: 75%"/>
 
     <TextView
@@ -54,6 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Description: Partly cloudy with a chance of rain"/>
 
     <TextView
@@ -61,6 +69,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Report Date: 2024-05-17"/>
 
     <TextView
@@ -68,6 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
         tools:text="Report Time: 14:30:00"/>
 
     <CheckBox
@@ -76,6 +86,7 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:text="City Favorite"
+        android:textColor="@android:color/white"
         tools:checked="true" />
 
     <!-- Botón para ir a la actividad de Datos Históricos -->
@@ -91,4 +102,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar Datos Actuales"/>
+
+    <!-- ImageView para mostrar la imagen de la ciudad -->
+    <ImageView
+        android:id="@+id/ivCityImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="City Image"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="16dp"/>
+
+    <!-- RecyclerView para mostrar el reporte de los próximos cinco días -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFutureWeather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>
