@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "258658977123",
+    "project_id": "weatherappfirebasedata",
+    "storage_bucket": "weatherappfirebasedata.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258658977123:android:f6bfbeaaccd8e03d71bf56",
+        "android_client_info": {
+          "package_name": "com.example.weatherapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFg-2NIKBr65raTBRaGD2n48q52UUFivk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
