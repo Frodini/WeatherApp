@@ -1,4 +1,4 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapplication.beans.Cities
+import com.example.weatherapplication.adapters.CityAdapter
+import com.example.weatherapplication.beans.CityRepository
 import com.example.weatherapplication.databinding.ActivityFavouriteCitiesListBinding
 
 // Activity to display a list of favorite cities

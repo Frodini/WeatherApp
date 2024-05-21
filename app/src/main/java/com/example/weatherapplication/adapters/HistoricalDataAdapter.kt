@@ -1,9 +1,11 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapplication.R
+import com.example.weatherapplication.database.WeatherData
 
 // Adapter for displaying historical weather data in a RecyclerView
 class HistoricalDataAdapter(private var dataList: List<WeatherData>) : RecyclerView.Adapter<HistoricalDataAdapter.DataViewHolder>() {

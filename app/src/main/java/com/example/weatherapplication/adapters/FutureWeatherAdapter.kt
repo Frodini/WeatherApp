@@ -1,10 +1,12 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapplication.R
+import com.example.weatherapplication.beans.FutureWeatherData
 
 class FutureWeatherAdapter(private var futureWeatherList: List<FutureWeatherData>) :
     RecyclerView.Adapter<FutureWeatherAdapter.FutureWeatherViewHolder>() {

@@ -1,4 +1,4 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -13,17 +13,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapplication.database.AppDatabase
+import com.example.weatherapplication.beans.CityRepository
+import com.example.weatherapplication.adapters.FutureWeatherAdapter
+import com.example.weatherapplication.R
+import com.example.weatherapplication.database.WeatherData
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-// Activity to display detailed information about a selected city
 class CitiesDetailsActivity : AppCompatActivity() {
 
     private lateinit var futureWeatherAdapter: FutureWeatherAdapter
 
-    // Suppress lint warning for missing inflated id (to be used with view binding or findViewById)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,6 +107,24 @@ class CitiesDetailsActivity : AppCompatActivity() {
             saveWeatherData(weatherData)
         }
 
+        // Intent to navigate to the Chat Activity
+        val intentToChat = Intent(this, ChatActivity::class.java).apply {
+            putExtra("city_name", cityName)
+        }
+        // Set the click listener for the chat button
+        findViewById<Button>(R.id.btnChat).setOnClickListener {
+            startActivity(intentToChat)
+        }
+
+        // Intent to navigate to the Comments Activity
+        val intentToComments = Intent(this, CommentsActivity::class.java).apply {
+            putExtra("city_name", cityName)
+        }
+        // Set the click listener for the comments button
+        findViewById<Button>(R.id.btnComments).setOnClickListener {
+            startActivity(intentToComments)
+        }
+
         // Initialize RecyclerView for future weather report
         val rvFutureWeather = findViewById<RecyclerView>(R.id.rvFutureWeather)
         rvFutureWeather.layoutManager = LinearLayoutManager(this)
@@ -113,7 +134,10 @@ class CitiesDetailsActivity : AppCompatActivity() {
         rvFutureWeather.adapter = futureWeatherAdapter
 
         // Fetch future weather data from the API
-        CityRepository.fetchFutureWeatherData(cityName, "X4L4EFE3SE4UUWFRSNTVRHWWB") { futureWeatherList ->
+        CityRepository.fetchFutureWeatherData(
+            cityName,
+            "X4L4EFE3SE4UUWFRSNTVRHWWB"
+        ) { futureWeatherList ->
             runOnUiThread {
                 futureWeatherAdapter.updateData(futureWeatherList)
             }

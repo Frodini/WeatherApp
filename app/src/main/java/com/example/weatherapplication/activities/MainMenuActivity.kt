@@ -1,4 +1,4 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,11 +8,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapplication.adapters.FutureWeatherAdapter
+import com.example.weatherapplication.beans.FutureWeatherData
+import com.example.weatherapplication.R
 import com.example.weatherapplication.databinding.ActivityMainMenuBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
-import org.json.JSONObject
 
 // Main activity class for the main menu
 class MainMenuActivity : AppCompatActivity() {

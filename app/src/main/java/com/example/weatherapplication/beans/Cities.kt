@@ -1,4 +1,4 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.beans
 
 data class Cities(
     val name: String,

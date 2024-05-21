@@ -1,4 +1,4 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.activities
 
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapplication.database.AppDatabase
+import com.example.weatherapplication.adapters.HistoricalDataAdapter
+import com.example.weatherapplication.R
+import com.example.weatherapplication.database.WeatherData
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData

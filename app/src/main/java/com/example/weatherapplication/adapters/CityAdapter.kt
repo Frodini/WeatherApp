@@ -1,9 +1,10 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapplication.beans.Cities
 import com.example.weatherapplication.databinding.ElementListviewBinding
 
 // Adapter for managing and displaying a list of city items in a RecyclerView

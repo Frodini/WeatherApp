@@ -1,8 +1,9 @@
-package com.example.weatherapplication
+package com.example.weatherapplication.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -13,9 +14,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.weatherapplication.beans.CityRepository
+import com.example.weatherapplication.beans.FutureWeatherData
+import com.example.weatherapplication.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.FirebaseAuth
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -30,27 +34,73 @@ import java.io.IOException
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
     companion object {
-        const val PERMISSION_REQUEST_CODE = 120
+        private const val PERMISSION_REQUEST_CODE = 120
     }
 
     // Declare FusedLocationProviderClient for getting location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    // FirebaseAuth instance
+    private lateinit var auth: FirebaseAuth
 
     // Flags to ensure location and data fetch are requested only once
     private var locationRequested = false
     private var weatherDataFetched = false
     private var cityDataFetched = false
 
-    // onCreate method called when the activity is first created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        // Initialize the FusedLocationProviderClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
 
-        // Start initialization and data loading
-        initializeAndLoadData()
+        // Check if user is already registered
+        if (isUserRegistered()) {
+            // Log in the user with the stored credentials
+            loginUserWithStoredCredentials()
+        } else {
+            // Redirect to RegisterActivity if user is not registered
+            val intent = Intent(this@SplashScreenActivity, RegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    private fun isUserRegistered(): Boolean {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        return sharedPreferences.contains("email") && sharedPreferences.contains("password")
+    }
+
+    private fun loginUserWithStoredCredentials() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        val email = sharedPreferences.getString("email", null)
+        val password = sharedPreferences.getString("password", null)
+
+        if (email != null && password != null) {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Initialize the FusedLocationProviderClient
+                        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+                        // Start initialization and data loading
+                        initializeAndLoadData()
+                    } else {
+                        // If sign in fails, display a message to the user
+                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                        // Redirect to RegisterActivity if login fails
+                        val intent = Intent(this@SplashScreenActivity, RegisterActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+        } else {
+            // Redirect to RegisterActivity if credentials are not found
+            val intent = Intent(this@SplashScreenActivity, RegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     // Method to initialize and load data
@@ -72,7 +122,7 @@ class SplashScreenActivity : AppCompatActivity() {
             Log.d("Location", "Permissions granted, requesting location updates")
             // Get the last known location
             fusedLocationClient.lastLocation
-                .addOnSuccessListener(this, OnSuccessListener { location ->
+                .addOnSuccessListener { location ->
                     if (location != null) {
                         Log.d("Location", "Location received: ${location.latitude}, ${location.longitude}")
                         // Fetch weather and city data using the received location
@@ -82,9 +132,9 @@ class SplashScreenActivity : AppCompatActivity() {
                         // Proceed to main menu if location is null
                         proceedToMainMenu()
                     }
-                })
-                .addOnFailureListener {
-                    Log.e("Location", "Failed to get location: ${it.message}")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Location", "Failed to get location: ${e.message}")
                     // Proceed to main menu if location request fails
                     proceedToMainMenu()
                 }
@@ -108,7 +158,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     // Callback method for handling permission request results
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -164,6 +214,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 proceedToMainMenu()
             }
 
+            @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val responseBody = response.body?.string()
                 Log.d("WeatherAPI", "Response: $responseBody")
@@ -188,11 +239,11 @@ class SplashScreenActivity : AppCompatActivity() {
                         for (i in 1..5) {
                             val day = daysArray.getJSONObject(i)
                             val dayData = FutureWeatherData(
-                                date = day.getString("datetime"),
-                                temperature = day.getDouble("temp"),
-                                windSpeed = day.getDouble("windspeed"),
-                                humidity = day.getDouble("humidity"),
-                                description = day.getString("description")
+                                day.getString("datetime"),
+                                day.getDouble("temp"),
+                                day.getDouble("windspeed"),
+                                day.getDouble("humidity"),
+                                day.getString("description")
                             )
                             futureWeatherList.add(dayData)
                         }
@@ -218,12 +269,15 @@ class SplashScreenActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         val futureWeatherJsonArray = JSONArray()
         for (weatherData in futureWeatherList) {
-            val dayJson = JSONObject().apply {
-                put("date", weatherData.date)
-                put("temperature", weatherData.temperature)
-                put("windSpeed", weatherData.windSpeed)
-                put("humidity", weatherData.humidity)
-                put("description", weatherData.description)
+            val dayJson = JSONObject()
+            try {
+                dayJson.put("date", weatherData.date)
+                dayJson.put("temperature", weatherData.temperature)
+                dayJson.put("windSpeed", weatherData.windSpeed)
+                dayJson.put("humidity", weatherData.humidity)
+                dayJson.put("description", weatherData.description)
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
             futureWeatherJsonArray.put(dayJson)
         }
@@ -249,6 +303,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 proceedToMainMenu()
             }
 
+            @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val responseBody = response.body?.string()
                 Log.d("CityAPI", "Response: $responseBody")
@@ -305,8 +360,9 @@ class SplashScreenActivity : AppCompatActivity() {
     // Method to proceed to the main menu activity
     private fun proceedToMainMenu() {
         if (weatherDataFetched && cityDataFetched) {
-            Handler(Looper.getMainLooper()).post {
-                startActivity(Intent(this, MainMenuActivity::class.java))
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                startActivity(Intent(this@SplashScreenActivity, MainMenuActivity::class.java))
                 finish()
             }
         }

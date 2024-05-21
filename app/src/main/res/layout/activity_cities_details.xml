@@ -103,6 +103,20 @@
         android:layout_height="wrap_content"
         android:text="Guardar Datos Actuales"/>
 
+    <!-- Botón para ir a la pantalla del chat -->
+    <Button
+        android:id="@+id/btnChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chat"/>
+
+    <!-- Botón para ir a la pantalla de comentarios -->
+    <Button
+        android:id="@+id/btnComments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comentarios"/>
+
     <!-- ImageView para mostrar la imagen de la ciudad -->
     <ImageView
         android:id="@+id/ivCityImage"
