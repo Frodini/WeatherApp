@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapplication.R
-import com.example.weatherapplication.adapters.CommentAdapter
+import com.example.weatherapplication.adapters.ComentAdapter
 import com.example.weatherapplication.beans.Comment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -19,7 +19,7 @@ class CommentsActivity : AppCompatActivity() {
     private lateinit var commentsRecyclerView: RecyclerView
     private lateinit var commentEditText: EditText
     private lateinit var postButton: Button
-    private lateinit var commentAdapter: CommentAdapter
+    private lateinit var commentAdapter: ComentAdapter
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var cityName: String
@@ -28,7 +28,6 @@ class CommentsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comments)
 
-        // Retrieve the city name from the intent
         cityName = intent.getStringExtra("city_name") ?: "Unknown City"
 
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView)
@@ -41,7 +40,7 @@ class CommentsActivity : AppCompatActivity() {
             .child(cityName)
 
         commentsRecyclerView.layoutManager = LinearLayoutManager(this)
-        commentAdapter = CommentAdapter(this)
+        commentAdapter = ComentAdapter(this) { commentKey -> deleteComment(commentKey) }
         commentsRecyclerView.adapter = commentAdapter
 
         postButton.setOnClickListener {
@@ -93,19 +92,31 @@ class CommentsActivity : AppCompatActivity() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val comments = mutableListOf<Comment>()
+                val commentKeys = mutableListOf<String>()
                 for (commentSnapshot in snapshot.children) {
                     val comment = commentSnapshot.getValue(Comment::class.java)
                     if (comment != null) {
                         comments.add(comment)
+                        commentKeys.add(commentSnapshot.key ?: "")
                         Log.d("CommentsActivity", "Loaded comment: $comment")
                     }
                 }
-                commentAdapter.updateComments(comments)
+                commentAdapter.updateComments(comments, commentKeys)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@CommentsActivity, "Failed to load comments: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun deleteComment(commentKey: String) {
+        database.child(commentKey).removeValue().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Failed to delete comment: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

@@ -24,4 +24,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Timestamp" />
+
+    <Button
+        android:id="@+id/commentDeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete" />
 </LinearLayout>
