@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapplication.R
 import com.example.weatherapplication.beans.Comment
 
-class ComentAdapter(private val context: Context, private val onDeleteClickListener: (String) -> Unit) : RecyclerView.Adapter<ComentAdapter.CommentViewHolder>() {
+class ComentAdapter(private val context: Context, private val currentUserEmail: String, private val onDeleteClickListener: (String) -> Unit) : RecyclerView.Adapter<ComentAdapter.CommentViewHolder>() {
 
     private val comments: MutableList<Comment> = mutableListOf()
     private val commentKeys: MutableList<String> = mutableListOf()
@@ -22,7 +22,7 @@ class ComentAdapter(private val context: Context, private val onDeleteClickListe
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = comments[position]
-        holder.bind(comment, commentKeys[position], onDeleteClickListener)
+        holder.bind(comment, commentKeys[position], currentUserEmail, onDeleteClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -43,12 +43,19 @@ class ComentAdapter(private val context: Context, private val onDeleteClickListe
         private val timestampTextView: TextView = itemView.findViewById(R.id.commentTimestampTextView)
         private val deleteButton: Button = itemView.findViewById(R.id.commentDeleteButton)
 
-        fun bind(comment: Comment, commentKey: String, onDeleteClickListener: (String) -> Unit) {
+        fun bind(comment: Comment, commentKey: String, currentUserEmail: String, onDeleteClickListener: (String) -> Unit) {
             userTextView.text = comment.user
             contentTextView.text = comment.content
             timestampTextView.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", comment.timestamp)
-            deleteButton.setOnClickListener {
-                onDeleteClickListener(commentKey)
+
+            // Mostrar botón de eliminación solo para los comentarios del usuario actual
+            if (comment.user == currentUserEmail) {
+                deleteButton.visibility = View.VISIBLE
+                deleteButton.setOnClickListener {
+                    onDeleteClickListener(commentKey)
+                }
+            } else {
+                deleteButton.visibility = View.GONE
             }
         }
     }

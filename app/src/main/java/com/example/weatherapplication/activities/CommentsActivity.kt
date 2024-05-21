@@ -23,6 +23,7 @@ class CommentsActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var cityName: String
+    private lateinit var currentUserEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +36,13 @@ class CommentsActivity : AppCompatActivity() {
         postButton = findViewById(R.id.postButton)
 
         auth = FirebaseAuth.getInstance()
+        currentUserEmail = auth.currentUser?.email ?: "Anonymous"
         database = FirebaseDatabase.getInstance("https://weatherappfirebasedata-default-rtdb.europe-west1.firebasedatabase.app/")
             .getReference("comments")
             .child(cityName)
 
         commentsRecyclerView.layoutManager = LinearLayoutManager(this)
-        commentAdapter = ComentAdapter(this) { commentKey -> deleteComment(commentKey) }
+        commentAdapter = ComentAdapter(this, currentUserEmail) { commentKey -> deleteComment(commentKey) }
         commentsRecyclerView.adapter = commentAdapter
 
         postButton.setOnClickListener {
