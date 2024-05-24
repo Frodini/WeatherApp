@@ -38,10 +38,22 @@
             android:textSize="12sp"
             tools:text="Timestamp" />
 
-        <Button
-            android:id="@+id/commentDeleteButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/commentEditButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/commentDeleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

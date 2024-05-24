@@ -12,7 +12,12 @@ import com.example.weatherapplication.R
 import com.example.weatherapplication.beans.Comment
 import com.example.weatherapplication.utils.DrawableUtil
 
-class ComentAdapter(private val context: Context, private val currentUserEmail: String, private val onDeleteClickListener: (String) -> Unit) : RecyclerView.Adapter<ComentAdapter.CommentViewHolder>() {
+class ComentAdapter(
+    private val context: Context,
+    private val currentUserEmail: String,
+    private val onDeleteClickListener: (String) -> Unit,
+    private val onEditClickListener: (Comment, String) -> Unit
+) : RecyclerView.Adapter<ComentAdapter.CommentViewHolder>() {
 
     private val comments: MutableList<Comment> = mutableListOf()
     private val commentKeys: MutableList<String> = mutableListOf()
@@ -24,7 +29,7 @@ class ComentAdapter(private val context: Context, private val currentUserEmail: 
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = comments[position]
-        holder.bind(comment, commentKeys[position], currentUserEmail, onDeleteClickListener)
+        holder.bind(comment, commentKeys[position], currentUserEmail, onDeleteClickListener, onEditClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -44,9 +49,16 @@ class ComentAdapter(private val context: Context, private val currentUserEmail: 
         private val contentTextView: TextView = itemView.findViewById(R.id.commentContentTextView)
         private val timestampTextView: TextView = itemView.findViewById(R.id.commentTimestampTextView)
         private val deleteButton: Button = itemView.findViewById(R.id.commentDeleteButton)
+        private val editButton: Button = itemView.findViewById(R.id.commentEditButton)
         private val profileImageView: ImageView = itemView.findViewById(R.id.commentProfileImageView)
 
-        fun bind(comment: Comment, commentKey: String, currentUserEmail: String, onDeleteClickListener: (String) -> Unit) {
+        fun bind(
+            comment: Comment,
+            commentKey: String,
+            currentUserEmail: String,
+            onDeleteClickListener: (String) -> Unit,
+            onEditClickListener: (Comment, String) -> Unit
+        ) {
             userTextView.text = comment.user
             contentTextView.text = comment.content
             timestampTextView.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", comment.timestamp)
@@ -55,14 +67,19 @@ class ComentAdapter(private val context: Context, private val currentUserEmail: 
             val initial = comment.user.first().toString().uppercase()
             profileImageView.setImageDrawable(DrawableUtil.getTextDrawableWithColor(initial, 40))
 
-            // Show delete button only for comments by the current user
+            // Show edit and delete buttons only for comments by the current user
             if (comment.user == currentUserEmail) {
                 deleteButton.visibility = View.VISIBLE
+                editButton.visibility = View.VISIBLE
                 deleteButton.setOnClickListener {
                     onDeleteClickListener(commentKey)
                 }
+                editButton.setOnClickListener {
+                    onEditClickListener(comment, commentKey)
+                }
             } else {
                 deleteButton.visibility = View.GONE
+                editButton.visibility = View.GONE
             }
         }
     }

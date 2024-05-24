@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +43,7 @@ class CommentsActivity : AppCompatActivity() {
             .child(cityName)
 
         commentsRecyclerView.layoutManager = LinearLayoutManager(this)
-        commentAdapter = ComentAdapter(this, currentUserEmail) { commentKey -> deleteComment(commentKey) }
+        commentAdapter = ComentAdapter(this, currentUserEmail, { commentKey -> deleteComment(commentKey) }, { comment, commentKey -> editComment(comment, commentKey) })
         commentsRecyclerView.adapter = commentAdapter
 
         postButton.setOnClickListener {
@@ -120,5 +121,31 @@ class CommentsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to delete comment: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun editComment(comment: Comment, commentKey: String) {
+        val editText = EditText(this)
+        editText.setText(comment.content)
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Edit Comment")
+            .setView(editText)
+            .setPositiveButton("Save") { _, _ ->
+                val newContent = editText.text.toString().trim()
+                if (newContent.isNotEmpty()) {
+                    val updatedComment = comment.copy(content = newContent, timestamp = System.currentTimeMillis())
+                    database.child(commentKey).setValue(updatedComment).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this, "Comment updated", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Failed to update comment: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "Comment cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+        dialog.show()
     }
 }
