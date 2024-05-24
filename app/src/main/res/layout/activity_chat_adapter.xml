@@ -3,25 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="end">
 
-    <TextView
-        android:id="@+id/chatUserTextView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        tools:text="User" />
+        android:orientation="vertical"
+        android:background="@drawable/background_user_message"
+        android:padding="8dp">
 
-    <TextView
-        android:id="@+id/chatContentTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Message content" />
+        <TextView
+            android:id="@+id/chatUserTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="You" />
 
-    <TextView
-        android:id="@+id/chatTimestampTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Timestamp" />
+        <TextView
+            android:id="@+id/chatContentTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Message content" />
+
+        <TextView
+            android:id="@+id/chatTimestampTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="Timestamp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/chatProfileImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_launcher_foreground" />
 </LinearLayout>

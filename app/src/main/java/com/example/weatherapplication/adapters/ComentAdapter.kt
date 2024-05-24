@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapplication.R
 import com.example.weatherapplication.beans.Comment
+import com.example.weatherapplication.utils.DrawableUtil
 
 class ComentAdapter(private val context: Context, private val currentUserEmail: String, private val onDeleteClickListener: (String) -> Unit) : RecyclerView.Adapter<ComentAdapter.CommentViewHolder>() {
 
@@ -42,13 +44,18 @@ class ComentAdapter(private val context: Context, private val currentUserEmail: 
         private val contentTextView: TextView = itemView.findViewById(R.id.commentContentTextView)
         private val timestampTextView: TextView = itemView.findViewById(R.id.commentTimestampTextView)
         private val deleteButton: Button = itemView.findViewById(R.id.commentDeleteButton)
+        private val profileImageView: ImageView = itemView.findViewById(R.id.commentProfileImageView)
 
         fun bind(comment: Comment, commentKey: String, currentUserEmail: String, onDeleteClickListener: (String) -> Unit) {
             userTextView.text = comment.user
             contentTextView.text = comment.content
             timestampTextView.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss", comment.timestamp)
 
-            // Mostrar botón de eliminación solo para los comentarios del usuario actual
+            // Set profile image with user initial
+            val initial = comment.user.first().toString().uppercase()
+            profileImageView.setImageDrawable(DrawableUtil.getTextDrawableWithColor(initial, 40))
+
+            // Show delete button only for comments by the current user
             if (comment.user == currentUserEmail) {
                 deleteButton.visibility = View.VISIBLE
                 deleteButton.setOnClickListener {

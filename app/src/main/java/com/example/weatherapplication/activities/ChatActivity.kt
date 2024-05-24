@@ -50,7 +50,7 @@ class ChatActivity : AppCompatActivity() {
             .child(cityName)
 
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
-        chatAdapter = ChatAdapter(this)
+        chatAdapter = ChatAdapter(this, currentUserEmail)
         chatRecyclerView.adapter = chatAdapter
 
         sendButton.setOnClickListener {

@@ -4,10 +4,11 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:gravity="start">
 
     <ImageView
-        android:id="@+id/commentProfileImageView"
+        android:id="@+id/chatProfileImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
@@ -16,32 +17,28 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/background_other_message"
+        android:padding="8dp">
 
         <TextView
-            android:id="@+id/commentUserTextView"
+            android:id="@+id/chatUserTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             tools:text="User" />
 
         <TextView
-            android:id="@+id/commentContentTextView"
+            android:id="@+id/chatContentTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Comment content" />
+            tools:text="Message content" />
 
         <TextView
-            android:id="@+id/commentTimestampTextView"
+            android:id="@+id/chatTimestampTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text="Timestamp" />
-
-        <Button
-            android:id="@+id/commentDeleteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete" />
     </LinearLayout>
 </LinearLayout>
