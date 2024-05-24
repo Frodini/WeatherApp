@@ -1,5 +1,4 @@
 package com.example.weatherapplication.beans
-
 data class ChatMessage(
     val user: String = "",
     val content: String = "",

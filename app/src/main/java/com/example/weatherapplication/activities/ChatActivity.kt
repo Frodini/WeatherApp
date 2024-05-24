@@ -16,17 +16,26 @@ import com.google.firebase.database.*
 
 class ChatActivity : AppCompatActivity() {
 
+    // Declare UI elements
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var messageEditText: EditText
     private lateinit var sendButton: Button
     private lateinit var chatAdapter: ChatAdapter
+
+    // Declare Firebase references
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var presenceReference: DatabaseReference
+
+    // Variables to store city name, current user email, and user presence key
     private lateinit var cityName: String
     private lateinit var currentUserEmail: String
-    private lateinit var presenceReference: DatabaseReference
     private var userPresenceKey: String? = null
+
+    // List to keep track of users currently present in the chat
     private var usersPresent: MutableList<String> = mutableListOf()
+
+    // Declare listeners for chat and presence
     private lateinit var chatListener: ChildEventListener
     private lateinit var presenceListener: ChildEventListener
 
@@ -34,14 +43,19 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        // Retrieve city name from intent extras
         cityName = intent.getStringExtra("city_name") ?: "Unknown City"
 
+        // Initialize UI elements
         chatRecyclerView = findViewById(R.id.chatRecyclerView)
         messageEditText = findViewById(R.id.messageEditText)
         sendButton = findViewById(R.id.sendButton)
 
+        // Initialize Firebase Authentication
         auth = FirebaseAuth.getInstance()
         currentUserEmail = auth.currentUser?.email ?: "Anonymous"
+
+        // Initialize Firebase Database references for chat and presence
         database = FirebaseDatabase.getInstance("https://weatherappfirebasedata-default-rtdb.europe-west1.firebasedatabase.app/")
             .getReference("chats")
             .child(cityName)
@@ -49,14 +63,17 @@ class ChatActivity : AppCompatActivity() {
             .getReference("presence")
             .child(cityName)
 
+        // Set up RecyclerView with a LinearLayoutManager and ChatAdapter
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
         chatAdapter = ChatAdapter(this, currentUserEmail)
         chatRecyclerView.adapter = chatAdapter
 
+        // Set up send button click listener to send a new message
         sendButton.setOnClickListener {
             sendMessage()
         }
 
+        // Authenticate the user if not already authenticated
         if (auth.currentUser == null) {
             auth.signInAnonymously().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -72,9 +89,11 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    // Method to send a new message
     private fun sendMessage() {
         val messageText = messageEditText.text.toString().trim()
         if (messageText.isNotEmpty()) {
+            // Create a new ChatMessage object
             val message = ChatMessage(
                 user = currentUserEmail,
                 content = messageText,
@@ -82,6 +101,7 @@ class ChatActivity : AppCompatActivity() {
                 usersPresent = usersPresent
             )
             Log.d("ChatActivity", "Sending message: $message")
+            // Push the message to the database
             database.push().setValue(message).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Message sent", Toast.LENGTH_SHORT).show()
@@ -96,6 +116,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    // Method to add the current user's presence to the presence reference
     private fun addUserPresence() {
         userPresenceKey = presenceReference.push().key
         if (userPresenceKey != null) {
@@ -104,7 +125,9 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    // Method to set up real-time chat listeners for presence and messages
     private fun setupRealtimeChat() {
+        // Listener to track presence of users in the chat
         presenceListener = presenceReference.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val email = snapshot.getValue(String::class.java)
@@ -129,6 +152,7 @@ class ChatActivity : AppCompatActivity() {
             }
         })
 
+        // Listener to load chat messages in real-time
         chatListener = database.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val message = snapshot.getValue(ChatMessage::class.java)
@@ -151,6 +175,7 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
+    // Clean up listeners and remove presence on activity destroy
     override fun onDestroy() {
         super.onDestroy()
         presenceReference.removeEventListener(presenceListener)

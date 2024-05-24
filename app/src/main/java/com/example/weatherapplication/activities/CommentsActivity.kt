@@ -17,12 +17,17 @@ import com.google.firebase.database.*
 
 class CommentsActivity : AppCompatActivity() {
 
+    // Declare UI elements
     private lateinit var commentsRecyclerView: RecyclerView
     private lateinit var commentEditText: EditText
     private lateinit var postButton: Button
     private lateinit var commentAdapter: ComentAdapter
+
+    // Declare Firebase references
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+
+    // Variables to store city name and current user email
     private lateinit var cityName: String
     private lateinit var currentUserEmail: String
 
@@ -30,26 +35,34 @@ class CommentsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comments)
 
+        // Retrieve city name from intent extras
         cityName = intent.getStringExtra("city_name") ?: "Unknown City"
 
+        // Initialize UI elements
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView)
         commentEditText = findViewById(R.id.commentEditText)
         postButton = findViewById(R.id.postButton)
 
+        // Initialize Firebase Authentication
         auth = FirebaseAuth.getInstance()
         currentUserEmail = auth.currentUser?.email ?: "Anonymous"
+
+        // Initialize Firebase Database reference for comments
         database = FirebaseDatabase.getInstance("https://weatherappfirebasedata-default-rtdb.europe-west1.firebasedatabase.app/")
             .getReference("comments")
             .child(cityName)
 
+        // Set up RecyclerView with a LinearLayoutManager and CommentAdapter
         commentsRecyclerView.layoutManager = LinearLayoutManager(this)
         commentAdapter = ComentAdapter(this, currentUserEmail, { commentKey -> deleteComment(commentKey) }, { comment, commentKey -> editComment(comment, commentKey) })
         commentsRecyclerView.adapter = commentAdapter
 
+        // Set up post button click listener to post a new comment
         postButton.setOnClickListener {
             postComment()
         }
 
+        // Authenticate the user if not already authenticated
         if (auth.currentUser == null) {
             auth.signInAnonymously().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -63,17 +76,20 @@ class CommentsActivity : AppCompatActivity() {
         }
     }
 
+    // Method to post a new comment
     private fun postComment() {
         val commentText = commentEditText.text.toString().trim()
         if (commentText.isNotEmpty()) {
             val user = auth.currentUser
             if (user != null) {
+                // Create a new Comment object
                 val comment = Comment(
                     user = user.email ?: "Anonymous",
                     content = commentText,
                     timestamp = System.currentTimeMillis()
                 )
                 Log.d("CommentsActivity", "Posting comment: $comment")
+                // Push the comment to the database
                 database.push().setValue(comment).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Comment posted", Toast.LENGTH_SHORT).show()
@@ -91,6 +107,7 @@ class CommentsActivity : AppCompatActivity() {
         }
     }
 
+    // Method to load comments from the database
     private fun loadComments() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -104,6 +121,7 @@ class CommentsActivity : AppCompatActivity() {
                         Log.d("CommentsActivity", "Loaded comment: $comment")
                     }
                 }
+                // Update the adapter with the loaded comments and keys
                 commentAdapter.updateComments(comments, commentKeys)
             }
 
@@ -113,6 +131,7 @@ class CommentsActivity : AppCompatActivity() {
         })
     }
 
+    // Method to delete a comment
     private fun deleteComment(commentKey: String) {
         database.child(commentKey).removeValue().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -123,16 +142,20 @@ class CommentsActivity : AppCompatActivity() {
         }
     }
 
+    // Method to edit a comment
     private fun editComment(comment: Comment, commentKey: String) {
         val editText = EditText(this)
         editText.setText(comment.content)
+        // Create an AlertDialog to edit the comment
         val dialog = AlertDialog.Builder(this)
             .setTitle("Edit Comment")
             .setView(editText)
             .setPositiveButton("Save") { _, _ ->
                 val newContent = editText.text.toString().trim()
                 if (newContent.isNotEmpty()) {
+                    // Create an updated Comment object
                     val updatedComment = comment.copy(content = newContent, timestamp = System.currentTimeMillis())
+                    // Update the comment in the database
                     database.child(commentKey).setValue(updatedComment).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(this, "Comment updated", Toast.LENGTH_SHORT).show()
