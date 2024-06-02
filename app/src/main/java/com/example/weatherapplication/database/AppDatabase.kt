@@ -21,7 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "weather_database"
                 )
-                    .fallbackToDestructiveMigration() // Permitir migraciones destructivas
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
